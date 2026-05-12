@@ -1,5 +1,6 @@
 import pandas as pd
 import json
+import os
 from datetime import datetime
 from config import SCORED_DATA_PATH, USER_PROFILES_PATH
 
