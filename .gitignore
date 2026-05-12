@@ -1,0 +1,36 @@
+# Data files
+data/raw/creditcard.csv
+data/raw/creditcard.csv.zip
+data/processed/features.csv
+data/processed/transactions_scored.csv
+data/processed/model_comparison.csv
+data/synthetic/transactions_raw.csv
+data/synthetic/user_profiles.csv
+
+# Model files
+models/isolation_forest.pkl
+models/scaler.pkl
+models/feature_columns.pkl
+models/shap_importance.csv
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Environment
+.env
+*.env
+
+# Node modules
+frontend/suraksha-ui/node_modules/
+
+# React build
+frontend/suraksha-ui/build/
+
+# Start script
+start.bat
+frontend/suraksha-ui/
