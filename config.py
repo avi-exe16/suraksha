@@ -1,6 +1,6 @@
 import os
 
-BASE_DIR = r"C:\Users\Abhishek Shandilya\Desktop\suraksha"
+BASE_DIR = os.environ.get("BASE_DIR", "/app")
 
 MODEL_PATH = os.path.join(BASE_DIR, "models", "isolation_forest.pkl")
 SCALER_PATH = os.path.join(BASE_DIR, "models", "scaler.pkl")
@@ -13,4 +13,4 @@ FRAUD_THRESHOLD_REVIEW = 0.5
 FRAUD_THRESHOLD_BLOCK = 0.8
 
 API_HOST = "0.0.0.0"
-API_PORT = 8000
+API_PORT = int(os.environ.get("PORT", 8000))

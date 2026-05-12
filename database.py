@@ -3,11 +3,32 @@ import json
 from datetime import datetime
 from config import SCORED_DATA_PATH, USER_PROFILES_PATH
 
-df_transactions = pd.read_csv(SCORED_DATA_PATH)
-df_transactions["timestamp"] = pd.to_datetime(df_transactions["timestamp"])
+def load_data():
+    if os.path.exists(SCORED_DATA_PATH):
+        df = pd.read_csv(SCORED_DATA_PATH)
+        df["timestamp"] = pd.to_datetime(df["timestamp"])
+    else:
+        df = pd.DataFrame(columns=[
+            "txn_id", "user_id", "timestamp", "amount", "city",
+            "lat", "lon", "device_id", "merchant_category",
+            "km_from_last_txn", "minutes_from_last_txn", "impossible_speed",
+            "is_fraud", "hour", "day_of_week", "is_weekend", "is_night",
+            "txn_count_1hr", "txn_count_24hr", "amount_sum_1hr",
+            "amount_sum_24hr", "amount_vs_user_avg", "is_new_device",
+            "device_count_7d", "is_new_merchant_category",
+            "anomaly_score_raw", "anomaly_score", "predicted_fraud"
+        ])
+    return df
 
-df_users = pd.read_csv(USER_PROFILES_PATH)
 
+def load_users():
+    if os.path.exists(USER_PROFILES_PATH):
+        return pd.read_csv(USER_PROFILES_PATH)
+    return pd.DataFrame(columns=["user_id", "name", "email"])
+
+
+df_transactions = load_data()
+df_users = load_users()
 audit_log = []
 consent_registry = {}
 flagged_transactions = []

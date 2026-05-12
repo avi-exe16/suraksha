@@ -1,6 +1,7 @@
 import joblib
 import numpy as np
 import pandas as pd
+import os
 from config import (
     MODEL_PATH,
     SCALER_PATH,
@@ -10,10 +11,24 @@ from config import (
     FRAUD_THRESHOLD_BLOCK,
 )
 
-iso_forest = joblib.load(MODEL_PATH)
-scaler = joblib.load(SCALER_PATH)
-FEATURE_COLUMNS = joblib.load(FEATURE_COLUMNS_PATH)
-shap_importance = pd.read_csv(SHAP_IMPORTANCE_PATH)
+
+def load_or_train_models():
+    if not os.path.exists(MODEL_PATH):
+        print("Model files not found. Training new models...")
+        from train_model import train_and_save
+        models_dir = os.path.dirname(MODEL_PATH)
+        train_and_save(models_dir)
+        print("Model training complete.")
+
+    iso_forest = joblib.load(MODEL_PATH)
+    scaler = joblib.load(SCALER_PATH)
+    feature_columns = joblib.load(FEATURE_COLUMNS_PATH)
+    shap_imp = pd.read_csv(SHAP_IMPORTANCE_PATH)
+
+    return iso_forest, scaler, feature_columns, shap_imp
+
+
+iso_forest, scaler, FEATURE_COLUMNS, shap_importance = load_or_train_models()
 
 
 def score_transaction(txn: dict) -> dict:
