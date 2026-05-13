@@ -4,6 +4,7 @@ import os
 from datetime import datetime
 from config import SCORED_DATA_PATH, USER_PROFILES_PATH
 
+
 def load_data():
     if os.path.exists(SCORED_DATA_PATH):
         df = pd.read_csv(SCORED_DATA_PATH)
@@ -25,31 +26,36 @@ def load_data():
 def load_users():
     if os.path.exists(USER_PROFILES_PATH):
         return pd.read_csv(USER_PROFILES_PATH)
-    return pd.DataFrame(columns=["user_id", "name", "email"])
+    return pd.DataFrame(columns=["user_id", "name", "email", "phone",
+                                  "home_city", "home_lat", "home_lon",
+                                  "persona", "avg_transaction_amount"])
 
 
 df_transactions = load_data()
 df_users = load_users()
+
 audit_log = []
 consent_registry = {}
 flagged_transactions = []
 
 
 def get_transactions(limit: int = 100, risk_level: str = None) -> list:
+    if df_transactions.empty:
+        return []
     df = df_transactions.copy()
-
     if risk_level == "high":
         df = df[df["anomaly_score"] >= 0.8]
     elif risk_level == "medium":
         df = df[(df["anomaly_score"] >= 0.5) & (df["anomaly_score"] < 0.8)]
     elif risk_level == "low":
         df = df[df["anomaly_score"] < 0.5]
-
     df = df.sort_values("timestamp", ascending=False).head(limit)
     return df.to_dict(orient="records")
 
 
 def get_transaction_by_id(txn_id: str) -> dict:
+    if df_transactions.empty:
+        return None
     result = df_transactions[df_transactions["txn_id"] == txn_id]
     if result.empty:
         return None
@@ -57,12 +63,16 @@ def get_transaction_by_id(txn_id: str) -> dict:
 
 
 def get_user_transactions(user_id: str) -> list:
+    if df_transactions.empty:
+        return []
     result = df_transactions[df_transactions["user_id"] == user_id]
     result = result.sort_values("timestamp", ascending=False)
     return result.to_dict(orient="records")
 
 
 def get_user_profile(user_id: str) -> dict:
+    if df_users.empty:
+        return None
     result = df_users[df_users["user_id"] == user_id]
     if result.empty:
         return None
@@ -112,6 +122,17 @@ def get_flagged_transactions(limit: int = 50) -> list:
 
 def get_risk_stats() -> dict:
     total = len(df_transactions)
+
+    if total == 0:
+        return {
+            "total_transactions": 0,
+            "high_risk": 0,
+            "medium_risk": 0,
+            "low_risk": 0,
+            "fraud_rate": 0.0,
+            "amount_saved": 0.0,
+        }
+
     high = len(df_transactions[df_transactions["anomaly_score"] >= 0.8])
     medium = len(df_transactions[
         (df_transactions["anomaly_score"] >= 0.5) &
