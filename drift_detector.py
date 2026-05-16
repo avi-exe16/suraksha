@@ -45,7 +45,7 @@ def compute_drift_report(df: pd.DataFrame) -> dict:
         })
 
     ref_fraud_rate = float(reference["predicted_fraud"].mean() * 100) if "predicted_fraud" in reference.columns else 0.0
-cur_fraud_rate = float(current["predicted_fraud"].mean() * 100) if "predicted_fraud" in current.columns else 0.0
+    cur_fraud_rate = float(current["predicted_fraud"].mean() * 100) if "predicted_fraud" in current.columns else 0.0
     fraud_rate_change = float(abs(cur_fraud_rate - ref_fraud_rate))
 
     return {
