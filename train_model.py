@@ -186,6 +186,27 @@ def train_and_save(models_dir):
     shap_importance.to_csv(os.path.join(models_dir, "shap_importance.csv"), index=False)
 
     print("All model artifacts saved.")
+    scored_data_path = os.path.join(models_dir, "..", "data", "processed", "transactions_scored.csv")
+    os.makedirs(os.path.dirname(scored_data_path), exist_ok=True)
+
+    df["anomaly_score_raw"] = iso_forest.decision_function(scaler.transform(df[FEATURE_COLUMNS].values))
+    min_score = df["anomaly_score_raw"].min()
+    max_score = df["anomaly_score_raw"].max()
+    df["anomaly_score"] = 1 - (df["anomaly_score_raw"] - min_score) / (max_score - min_score)
+    df["predicted_fraud"] = (iso_forest.predict(scaler.transform(df[FEATURE_COLUMNS].values)) == -1).astype(int)
+    df["txn_id"] = [f"TXN{str(i).zfill(8)}" for i in range(len(df))]
+    df["user_id"] = [f"USR{str(random.randint(1, 200)).zfill(5)}" for _ in range(len(df))]
+    df["timestamp"] = pd.date_range(start="2024-01-01", periods=len(df), freq="30min")
+    df["city"] = [random.choice([c["name"] for c in CITIES]) for _ in range(len(df))]
+    df["lat"] = [next(c["lat"] for c in CITIES if c["name"] == city) for city in df["city"]]
+    df["lon"] = [next(c["lon"] for c in CITIES if c["name"] == city) for city in df["city"]]
+    df["device_id"] = [fake.uuid4() for _ in range(len(df))]
+    df["merchant_category"] = [random.choice(MERCHANT_CATEGORIES) for _ in range(len(df))]
+    df["is_fraud"] = df["predicted_fraud"]
+    df["day_of_week"] = pd.to_datetime(df["timestamp"]).dt.dayofweek
+
+    df.to_csv(scored_data_path, index=False)
+    print("Scored data saved:", scored_data_path)
     return iso_forest, scaler, FEATURE_COLUMNS
 
 

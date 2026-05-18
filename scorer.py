@@ -90,3 +90,17 @@ def get_risk_summary(scored_df: pd.DataFrame) -> dict:
         "low_risk": low_risk,
         "fraud_rate": round(high_risk / total * 100, 2),
     }
+
+
+def score_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+    X = df[FEATURE_COLUMNS].copy()
+    X_scaled = scaler.transform(X)
+
+    raw_scores = iso_forest.decision_function(X_scaled)
+    normalized = (raw_scores - raw_scores.min()) / (raw_scores.max() - raw_scores.min())
+    anomaly_scores = 1 - normalized
+
+    df = df.copy()
+    df["anomaly_score"] = anomaly_scores
+    df["predicted_fraud"] = (iso_forest.predict(X_scaled) == -1).astype(int)
+    return df

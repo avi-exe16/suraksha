@@ -1,6 +1,6 @@
 import os
 
-BASE_DIR = os.environ.get("BASE_DIR", "/app")
+BASE_DIR = os.environ.get("BASE_DIR", r"C:\Users\Abhishek Shandilya\Desktop\suraksha")
 
 MODEL_PATH = os.path.join(BASE_DIR, "models", "isolation_forest.pkl")
 SCALER_PATH = os.path.join(BASE_DIR, "models", "scaler.pkl")
