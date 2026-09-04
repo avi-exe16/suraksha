@@ -2,7 +2,7 @@
 
 A production-grade, full-stack fraud detection platform that detects anomalous banking transactions in real time using unsupervised machine learning, explainable AI, and automated regulatory compliance tooling.
 
-**Live Demo:** https://suraksha-frontend-psi.vercel.app  
+**Live Demo:** http://suraksha-frontend-aws.s3-website.ap-south-1.amazonaws.com  
 **API:** http://3.6.98.160:8000/docs  
 **Developed by:** Abhishek Shandilya — VIT Bhopal University
 
