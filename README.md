@@ -163,17 +163,3 @@ Validated on the Kaggle Credit Card Fraud Detection dataset — 284,807 real tra
 - Digital Personal Data Protection Act (DPDP) 2023
 - Financial Intelligence Unit India (FIU-IND) STR format
 
----
-
-## Project Structure
-
-suraksha/
-├── main.py — FastAPI application, 16 endpoints
-├── config.py — Environment configuration
-├── scorer.py — Model loading and transaction scoring
-├── database.py — PostgreSQL data layer
-├── models.py — Pydantic request/response models
-├── str_report.py — FIU-IND STR PDF generation
-├── drift_detector.py — Model drift monitoring
-├── train_model.py — Model training pipeline
-└── requirements.txt — Python dependencies
